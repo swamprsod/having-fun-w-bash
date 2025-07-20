@@ -2,4 +2,4 @@
 
 test
 
-![1](images/trolleybus-from-bread.jpg)
+![1](trolleybus-from-bread.jpg)
