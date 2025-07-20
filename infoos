@@ -1,0 +1,52 @@
+#!/bin/bash
+
+commands=(
+  "uname -a"
+  "fastfetch"
+  "pfetch"
+  "cat /etc/os-release"
+  "cat /proc/cpuinfo"
+  "cpufetch"
+  "cat /proc/meminfo"
+  "lsblk"
+  "lscpu"
+  "lsusb"
+  "ip a"
+  "sensors"
+  "sudo dmesg -w"
+)
+
+selected=1
+
+draw_menu() {
+  for i in "${!commands[@]}"; do
+    if [ $i -eq $selected ]; then
+      echo -e "> \e[4m${commands[i]}\e[0m"
+    else
+      echo "  ${commands[i]}"
+    fi
+  done
+  echo "" 
+}
+
+draw_menu # я засунул мокрицу в аорту
+
+while read -rsn1 key; do
+  case $key in
+    $'\x1B')
+      read -rsn2 -t 0.1 key2
+      case $key2 in
+        '[A') ((selected > 0)) && ((selected--)) ;;
+        '[B') ((selected < ${#commands[@]}-1)) && ((selected++)) ;;
+      esac
+
+      printf "\033[$((${#commands[@]}+1))A"
+      draw_menu
+      ;;
+    '')
+      echo
+      eval "${commands[selected]}"
+      exit 0
+      ;;
+  esac
+done
