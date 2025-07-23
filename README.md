@@ -1,4 +1,4 @@
-# infoos-test
+# bash testing
 
 test
 
