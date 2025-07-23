@@ -1,0 +1,4 @@
+#!/bin/bash
+mkdir -p ~/silly/
+cat /dev/urandom > ~/silly/trolling.txt
+
