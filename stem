@@ -1,0 +1,43 @@
+#!/bin/bash
+
+games=(
+  "Minecraft|swaymsg exec 'QT_QPA_PLATFORM=xcb GDK_BACKEND=x11 prismlauncher'"
+  "osu!|swaymsg exec osu"
+  "Geometry Dash|cd ~/games/gd/gdsub && WINEPREFIX=~/.wine-geometrydash WINEDLLOVERRIDES='xinput1_4=n,b' wine GeometryDash.exe"
+)
+
+selected=0
+
+draw_menu() {
+  for i in "${!games[@]}"; do
+    game_name="${games[i]%%|*}"
+    if [ $i -eq $selected ]; then
+      echo -e "> \e[4m${game_name}\e[0m"
+    else
+      echo "  ${game_name}"
+    fi
+  done
+}
+
+draw_menu
+
+while read -rsn1 key; do
+  case $key in
+    $'\x1B')
+      read -rsn2 -t 0.1 key2
+      case $key2 in
+        '[A') ((selected > 0)) && ((selected--)) ;;
+        '[B') ((selected < ${#games[@]}-1)) && ((selected++)) ;;
+      esac
+
+      printf "\033[$((${#games[@]}))A"
+      draw_menu
+      ;;
+    '')
+      echo
+      game_command="${games[selected]#*|}"
+      eval "$game_command" > /dev/null 2>&1  
+      exit 0
+      ;;
+  esac
+done
